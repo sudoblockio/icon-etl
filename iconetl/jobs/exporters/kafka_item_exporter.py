@@ -132,7 +132,7 @@ class KafkaItemExporter:
                             timestamp=str(item["timestamp"]),
                             block_timestamp=item["block_timestamp"],
                             nid=item["nid"],
-                            nonce=item["nonce"],
+                            nonce=dec_to_hex(item["nonce"]),
                             hash=str(item["hash"]),
                             transaction_index=item["transaction_index"],
                             block_hash=str(item["block_hash"]),
