@@ -47,7 +47,7 @@ spec:
             - iconetl
           {{- if eq .Values.etl.mode "stream" }}
             - stream
-            - --last-synced-block-file="/data/last_synced_block.txt"
+            - --last-synced-block-file=/data/last_synced_block.txt
             {{- if .Values.etl.lag }}
             - --lag={{ .Values.etl.lag }}
             {{- end }}
