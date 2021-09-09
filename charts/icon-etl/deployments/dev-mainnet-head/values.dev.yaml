@@ -18,6 +18,6 @@ image:
 etl:
   mode: stream
   startAtHead: false
-  startBlock: 39416300
+  startBlock: "39416300"
   kafka:
     strimzi_enabled: false
