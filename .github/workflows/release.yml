@@ -2,6 +2,8 @@ name: Release to CI
 
 on:
   push:
+    branches:
+      - master
     tags:
       - "v*.*.*"
     paths-ignore:
@@ -53,57 +55,57 @@ jobs:
 
   update_deployments:
     name: Update dev deployments
-      runs-on: ubuntu-latest
-      needs: docker
-      steps:
-        - name: Merge main -> deployment-dev-head
-          uses: devmasx/merge-branch@v1.3.1
-          with:
-            type: now
-            from_branch: main
-            target_branch: deployment-dev-head
-            github_token: ${{ github.token }}
+    runs-on: ubuntu-latest
+    needs: docker
+    steps:
+      - name: Merge main -> deployment-dev-head
+        uses: devmasx/merge-branch@v1.3.1
+        with:
+          type: now
+          from_branch: main
+          target_branch: deployment-dev-head
+          github_token: ${{ github.token }}
 
-        - name: Merge main -> deployment-dev-backfill
-          uses: devmasx/merge-branch@v1.3.1
-          with:
-            type: now
-            from_branch: main
-            target_branch: deployment-dev-backfill
-            github_token: ${{ github.token }}
+      - name: Merge main -> deployment-dev-backfill
+        uses: devmasx/merge-branch@v1.3.1
+        with:
+          type: now
+          from_branch: main
+          target_branch: deployment-dev-backfill
+          github_token: ${{ github.token }}
 
-        - name: Checkout dev head deployment
-          uses: actions/checkout@v2
-          with:
-            ref: deployment-dev-head
-            path: deployment-dev-head
+      - name: Checkout dev head deployment
+        uses: actions/checkout@v2
+        with:
+          ref: deployment-dev-head
+          path: deployment-dev-head
 
-        - name: Checkout dev backfill deployment
-          uses: actions/checkout@v2
-          with:
-            ref: deployment-dev-backfill
-            path: deployment-dev-backfill
+      - name: Checkout dev backfill deployment
+        uses: actions/checkout@v2
+        with:
+          ref: deployment-dev-backfill
+          path: deployment-dev-backfill
 
-        - name: Update dev head deployment values file and re-commit
-          uses: fjogeleit/yaml-update-action@master
-          with:
-            valueFile: 'chart/deployments/dev-mainnet-head/values.dev.yaml'
-            propertyPath: 'image.tag'
-            value: ${{ steps.source.outputs.TAG }}
-            branch: deployment-dev-head
-            createPR: 'false'
-            token: ${{ secrets.GITHUB_TOKEN }}
-            updateFile: true
-            workDir: deployment-dev-head
+      - name: Update dev head deployment values file and re-commit
+        uses: fjogeleit/yaml-update-action@master
+        with:
+          valueFile: 'chart/deployments/dev-mainnet-head/values.dev.yaml'
+          propertyPath: 'image.tag'
+          value: ${{ steps.source.outputs.TAG }}
+          branch: deployment-dev-head
+          createPR: 'false'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          updateFile: true
+          workDir: deployment-dev-head
 
-        - name: Update dev backfill deployment values file and re-commit
-          uses: fjogeleit/yaml-update-action@master
-          with:
-            valueFile: 'chart/deployments/dev-mainnet-backfill/values.dev.yaml'
-            propertyPath: 'image.tag'
-            value: ${{ steps.source.outputs.TAG }}
-            branch: deployment-dev-backfill
-            createPR: 'false'
-            token: ${{ secrets.GITHUB_TOKEN }}
-            updateFile: true
-            workDir: deployment-dev-backfill
+      - name: Update dev backfill deployment values file and re-commit
+        uses: fjogeleit/yaml-update-action@master
+        with:
+          valueFile: 'chart/deployments/dev-mainnet-backfill/values.dev.yaml'
+          propertyPath: 'image.tag'
+          value: ${{ steps.source.outputs.TAG }}
+          branch: deployment-dev-backfill
+          createPR: 'false'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          updateFile: true
+          workDir: deployment-dev-backfill
