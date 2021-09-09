@@ -5,11 +5,11 @@ deployment:
     'consul.hashicorp.com/connect-service-upstreams': 'icon-nodes-mainnet-a:9000'
   resources:
     requests:
-      cpu: 100m
-      memory: 128Mi
-    limits:
       cpu: 500m
       memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1024Mi
 image:
   repository: geometrylabs/iconetl
   tag: "v0.1.4-alpha.10"
@@ -17,6 +17,7 @@ image:
 
 etl:
   mode: stream
-  startAtHead: true
+  startAtHead: false
+  startBlock: 39416300
   kafka:
     strimzi_enabled: false
