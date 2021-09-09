@@ -17,6 +17,6 @@ image:
 
 etl:
   mode: stream
-  startAtHead: false
+  startAtHead: true
   kafka:
     strimzi_enabled: false
