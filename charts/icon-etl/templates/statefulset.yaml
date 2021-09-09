@@ -21,6 +21,7 @@ spec:
     spec:
       securityContext:
         fsGroup: 1000
+      {{- if and ( not .Values.etl.startBlock ) ( not .Values.etl.startAtHead ) }}
       initContainers:
         - name: init
           image: busybox:1.33
@@ -28,6 +29,7 @@ spec:
           volumeMounts:
           - name: data
             mountPath: /data
+      {{- end }}
       containers:
         - name: icon-etl
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
