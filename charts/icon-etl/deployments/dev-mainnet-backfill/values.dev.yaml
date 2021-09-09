@@ -1,0 +1,22 @@
+deployment:
+  replicas: 1
+  annotations: |
+    'consul.hashicorp.com/connect-inject': 'true'
+    'consul.hashicorp.com/connect-service-upstreams': 'icon-nodes-mainnet-a:9000'
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+image:
+  repository: geometrylabs/iconetl
+  tag: "v0.1.4-alpha.10"
+  imagePullPolicy: IfNotPresent
+
+etl:
+  mode: stream
+  startAtHead: false
+  kafka:
+    strimzi_enabled: false
