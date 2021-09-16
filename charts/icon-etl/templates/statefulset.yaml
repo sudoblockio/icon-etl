@@ -21,6 +21,7 @@ spec:
     spec:
       securityContext:
         fsGroup: 1000
+      {{- if and ( not .Values.etl.startBlock ) ( not .Values.etl.startAtHead ) }}
       initContainers:
         - name: init
           image: busybox:1.33
@@ -28,6 +29,7 @@ spec:
           volumeMounts:
           - name: data
             mountPath: /data
+      {{- end }}
       containers:
         - name: icon-etl
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
@@ -47,7 +49,7 @@ spec:
             - iconetl
           {{- if eq .Values.etl.mode "stream" }}
             - stream
-            - --last-synced-block-file="/data/last_synced_block.txt"
+            - --last-synced-block-file=/data/last_synced_block.txt
             {{- if .Values.etl.lag }}
             - --lag={{ .Values.etl.lag }}
             {{- end }}
@@ -90,10 +92,10 @@ spec:
             {{- if .Values.etl.kafka.compressionType }}
             - --kafka-compression-type={{ .Values.etl.kafka.compressionType }}
             {{- end }}
-            {{- if .Values.etl.kafka.schemaRegistryURL }}
+            {{- if .Values.etl.kafka.schemaRegistry.url }}
             - --kafka-schema-registry-url={{ .Values.etl.kafka.schemaRegistry.url }}
             {{- end }}
-            {{- if .Values.etl.kafka.schemaRegistryURL }}
+            {{- if .Values.etl.kafka.schemaRegistry.url }}
             - --kafka-use-schema-registry={{ .Values.etl.kafka.schemaRegistry.enabled }}
             {{- end }}
           {{- end }}
