@@ -96,6 +96,7 @@ class KafkaItemExporter:
                         value_object = logs_raw.LogRaw(
                             type=str(item["type"]),
                             log_index=item["log_index"],
+                            max_log_index=item["max_log_index"],
                             transaction_hash=str(item["transaction_hash"]),
                             transaction_index=item["transaction_index"],
                             address=str(item["address"]),
@@ -134,7 +135,6 @@ class KafkaItemExporter:
                             nid=item["nid"],
                             nonce=dec_to_hex(item["nonce"]),
                             hash=str(item["hash"]),
-                            log_count=item["log_count"],
                             transaction_index=item["transaction_index"],
                             block_hash=str(item["block_hash"]),
                             block_number=item["block_number"],
