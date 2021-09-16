@@ -24,11 +24,12 @@ from iconetl.domain.receipt_log import IcxReceiptLog
 
 class IcxReceiptLogMapper(object):
     def json_dict_to_receipt_log(
-        self, json_dict, log_idx, tx_hash, tx_idx, blk_hash, blk_num
+        self, json_dict, log_idx, tx_hash, tx_idx, blk_hash, blk_num, log_count
     ):
         receipt_log = IcxReceiptLog()
 
         receipt_log.log_index = log_idx
+        receipt_log.max_log_index = log_count
         receipt_log.transaction_hash = tx_hash
         receipt_log.transaction_index = tx_idx
         receipt_log.block_hash = blk_hash
@@ -51,6 +52,7 @@ class IcxReceiptLogMapper(object):
         return {
             "type": "log",
             "log_index": receipt_log.log_index,
+            "max_log_index": receipt_log.max_log_index,
             "transaction_hash": receipt_log.transaction_hash,
             "transaction_index": receipt_log.transaction_index,
             "block_hash": receipt_log.block_hash,
@@ -65,6 +67,7 @@ class IcxReceiptLogMapper(object):
         receipt_log = IcxReceiptLog()
 
         receipt_log.log_index = dict.get("log_index")
+        receipt_log.max_log_index = dict.get("max_log_index")
         receipt_log.transaction_hash = dict.get("transaction_hash")
         receipt_log.transaction_index = dict.get("transaction_index")
         receipt_log.block_hash = dict.get("block_hash")

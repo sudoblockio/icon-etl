@@ -134,6 +134,7 @@ class KafkaItemExporter:
                             nid=item["nid"],
                             nonce=dec_to_hex(item["nonce"]),
                             hash=str(item["hash"]),
+                            log_count=item["log_count"],
                             transaction_index=item["transaction_index"],
                             block_hash=str(item["block_hash"]),
                             block_number=item["block_number"],
