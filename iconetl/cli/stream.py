@@ -73,7 +73,7 @@ from iconetl.providers.auto import get_provider_from_uri
     "-s", "--start-block", default=None, show_default=True, type=int, help="Start block"
 )
 @click.option(
-    "-s", "--end-block", default=None, show_default=True, type=int, help="End block"
+    "-d", "--end-block", default=None, show_default=True, type=int, help="End block"
 )
 @click.option(
     "--start-at-head",
