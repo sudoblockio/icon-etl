@@ -46,6 +46,11 @@ class IcxReceiptMapper(object):
         receipt.status = hex_to_dec(json_dict.get("status"))
 
         if "eventLogs" in json_dict:
+            log_count = len(json_dict["eventLogs"])
+        else:
+            log_count = 0
+
+        if "eventLogs" in json_dict:
             receipt.logs = [
                 self.receipt_log_mapper.json_dict_to_receipt_log(
                     log,
@@ -54,6 +59,7 @@ class IcxReceiptMapper(object):
                     receipt.transaction_index,
                     receipt.block_hash,
                     receipt.block_number,
+                    log_count,
                 )
                 for idx, log in enumerate(json_dict["eventLogs"])
             ]
