@@ -20,8 +20,9 @@
 #  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-from blockchainetl_common.jobs.exporters.composite_item_exporter import \
-    CompositeItemExporter
+from blockchainetl_common.jobs.exporters.composite_item_exporter import (
+    CompositeItemExporter,
+)
 
 RECEIPT_FIELDS_TO_EXPORT = [
     "transaction_hash",
@@ -37,6 +38,7 @@ RECEIPT_FIELDS_TO_EXPORT = [
 
 LOG_FIELDS_TO_EXPORT = [
     "log_index",
+    "max_log_index",
     "transaction_hash",
     "transaction_index",
     "block_hash",
