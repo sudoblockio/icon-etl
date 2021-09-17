@@ -111,7 +111,8 @@ def enrich_logs(blocks, logs, transactions):
                 [
                     "type",
                     "log_index",
-                    "max_log_index" "transaction_hash",
+                    "max_log_index",
+                    "transaction_hash",
                     "transaction_index",
                     "address",
                     "data",
@@ -128,6 +129,7 @@ def enrich_logs(blocks, logs, transactions):
             [
                 "type",
                 "log_index",
+                "max_log_index",
                 "transaction_hash",
                 "transaction_index",
                 "address",
