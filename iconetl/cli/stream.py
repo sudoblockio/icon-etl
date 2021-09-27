@@ -31,6 +31,7 @@ from blockchainetl_common.streaming.streaming_utils import (
 from blockchainetl_common.thread_local_proxy import ThreadLocalProxy
 from iconsdk.icon_service import IconService
 from iconsdk.providers.http_provider import HTTPProvider
+from prometheus_client import start_http_server
 
 from iconetl.enumeration.entity_type import EntityType
 from iconetl.providers.auto import get_provider_from_uri
@@ -194,6 +195,7 @@ def stream(
     pid_file=None,
 ):
     """Streams all data types to console or Google Pub/Sub."""
+    start_http_server(9090)
     configure_logging(log_file)
     configure_signals()
     entity_types = parse_entity_types(entity_types)

@@ -21,7 +21,7 @@ setup(
     long_description_content_type="text/markdown",
     python_requires=">=3.6.0,<3.8.0",
     install_requires=[
-        "blockchain-etl-common==1.3.0",
+        "blockchain-etl-common-instrumented~=1.6.2a1",
         "requests>=2.20.0",
         "python-dateutil>=2.7.0",
         "click==7.0",
@@ -34,6 +34,7 @@ setup(
             "sqlalchemy==1.3.13",
             "confluent-kafka ~= 1.5.0",
             "fastavro ~= 1.2.0",
+            "prometheus-client ~= 0.11.0",
         ],
         "dev": ["pytest~=4.3.0"],
     },

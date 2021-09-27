@@ -17,6 +17,7 @@ USER iconetl
 COPY --chown=iconetl:iconetl . .
 ENV PATH=/$PROJECT_DIR:$PATH
 
+EXPOSE 9090
 ENTRYPOINT ["python", "iconetl"]
 
 FROM base as prod
