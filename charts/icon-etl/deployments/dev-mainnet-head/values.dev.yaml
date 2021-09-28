@@ -12,7 +12,7 @@ deployment:
       memory: 1024Mi
 image:
   repository: geometrylabs/iconetl
-  tag: "v0.1.4-alpha.10"
+  tag: "v0.1.5-alpha.2"
   imagePullPolicy: IfNotPresent
 
 etl:
