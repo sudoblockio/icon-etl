@@ -34,7 +34,9 @@ from prometheus_client import Gauge
 START_BLOCK = Gauge("start_block", "Start block height", ["network", "container"])
 END_BLOCK = Gauge("end_block", "End block height", ["network", "container"])
 TARGET_BLOCK = Gauge("target_block", "Target block height", ["network", "container"])
-LAST_SYNCED_BLOCK = Gauge("last_synced_block", "Last synced block height", ["network", "container"])
+LAST_SYNCED_BLOCK = Gauge(
+    "last_synced_block", "Last synced block height", ["network", "container"]
+)
 
 
 class Streamer:
@@ -77,8 +79,23 @@ class Streamer:
         if not self.metrics_labels["container"]:
             self.metrics_labels["container"] = "unspecified"
 
-        START_BLOCK.labels(self.metrics_labels["network"], self.metrics_labels["container"]).set(start_block)
-        END_BLOCK.labels(self.metrics_labels["network"], self.metrics_labels["container"]).set(end_block)
+        if not self.start_block and self.last_synced_block:
+            START_BLOCK.labels(
+                self.metrics_labels["network"], self.metrics_labels["container"]
+            ).set(self.last_synced_block)
+        else:
+            START_BLOCK.labels(
+                self.metrics_labels["network"], self.metrics_labels["container"]
+            ).set(start_block)
+
+        if self.end_block:
+            END_BLOCK.labels(
+                self.metrics_labels["network"], self.metrics_labels["container"]
+            ).set(end_block)
+        else:
+            END_BLOCK.labels(
+                self.metrics_labels["network"], self.metrics_labels["container"]
+            ).set(-1)
 
     def stream(self):
         try:
@@ -121,7 +138,9 @@ class Streamer:
         target_block = self._calculate_target_block(
             current_block, self.last_synced_block
         )
-        TARGET_BLOCK.labels(self.metrics_labels["network"], self.metrics_labels["container"]).set(target_block)
+        TARGET_BLOCK.labels(
+            self.metrics_labels["network"], self.metrics_labels["container"]
+        ).set(target_block)
         blocks_to_sync = max(target_block - self.last_synced_block, 0)
 
         logging.info(
@@ -137,7 +156,9 @@ class Streamer:
             logging.info("Writing last synced block {}".format(target_block))
             write_last_synced_block(self.last_synced_block_file, target_block)
             self.last_synced_block = target_block
-            LAST_SYNCED_BLOCK.labels(self.metrics_labels["network"], self.metrics_labels["container"]).set(target_block)
+            LAST_SYNCED_BLOCK.labels(
+                self.metrics_labels["network"], self.metrics_labels["container"]
+            ).set(target_block)
 
         return blocks_to_sync
 
