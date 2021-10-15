@@ -33,7 +33,7 @@ from iconetl.cli.stream import stream
 
 
 @click.group()
-@click.version_option(version="0.1.5-alpha.2")
+@click.version_option(version="0.1.5-alpha.3")
 @click.pass_context
 def cli(ctx):
     pass
