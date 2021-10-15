@@ -44,10 +44,7 @@ from iconetl.utils import dec_to_hex
 
 class KafkaItemExporter:
     def __init__(
-        self,
-        producer,
-        item_type_to_topic_mapping,
-        serializers,
+        self, producer, item_type_to_topic_mapping, serializers,
     ):
         self.producer = producer
         self.item_type_to_topic_mapping = item_type_to_topic_mapping
@@ -88,10 +85,11 @@ class KafkaItemExporter:
                         )
                     elif item["type"] == "log":
                         # Configure header & key
-                        key = bytes(item["address"], "utf-8")
+                        key = bytes(str(item["transaction_hash"]), "utf-8")
                         headers.append(
                             ("hash", bytes(item["transaction_hash"], "utf-8"))
                         )
+                        headers.append("address", bytes(item["address"], "utf-8"))
                         # Create logs_raw object
                         value_object = logs_raw.LogRaw(
                             type=str(item["type"]),
@@ -113,10 +111,10 @@ class KafkaItemExporter:
                         headers.append(("hash", bytes(item["hash"], "utf-8")))
                         if item["to_address"]:
                             headers.append(("to", bytes(item["to_address"], "utf-8")))
-                            key = bytes(item["to_address"], "utf-8")
+                            key = bytes(item["hash"], "utf-8")
                         else:
                             headers.append(("to", bytes("None", "utf-8")))
-                            key = bytes("None", "utf-8")
+                            key = bytes(item["hash"], "utf-8")
                         if item["from_address"]:
                             headers.append(
                                 ("from", bytes(item["from_address"], "utf-8"))
