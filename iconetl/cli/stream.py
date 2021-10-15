@@ -31,6 +31,7 @@ from blockchainetl_common.streaming.streaming_utils import (
 from blockchainetl_common.thread_local_proxy import ThreadLocalProxy
 from iconsdk.icon_service import IconService
 from iconsdk.providers.http_provider import HTTPProvider
+from prometheus_client import start_http_server
 
 from iconetl.enumeration.entity_type import EntityType
 from iconetl.providers.auto import get_provider_from_uri
@@ -171,6 +172,22 @@ from iconetl.providers.auto import get_provider_from_uri
     envvar="ICONETL_KAFKA_USE_SCHEMA_REGISTRY",
     help="Enable/disable use of schema registry",
 )
+@click.option(
+    "--metrics-network-name",
+    default=None,
+    show_default=False,
+    type=str,
+    envvar="ICONETL_METRICS_NETWORK_NAME",
+    help="Name to be included as network name in metrics",
+)
+@click.option(
+    "--metrics-container-name",
+    default=None,
+    show_default=False,
+    type=str,
+    envvar="ICONETL_METRICS_CONTAINER_NAME",
+    help="Name to be included as container name in metrics",
+)
 def stream(
     last_synced_block_file,
     lag,
@@ -186,6 +203,8 @@ def stream(
     kafka_compression_type,
     kafka_schema_registry_url,
     kafka_use_schema_registry,
+    metrics_network_name,
+    metrics_container_name,
     period_seconds=10,
     batch_size=2,
     block_batch_size=10,
@@ -194,13 +213,14 @@ def stream(
     pid_file=None,
 ):
     """Streams all data types to console or Google Pub/Sub."""
+    start_http_server(9090)
     configure_logging(log_file)
     configure_signals()
     entity_types = parse_entity_types(entity_types)
     validate_entity_types(entity_types, output)
     start_block = determine_start_block(start_block, start_at_head, provider_uri)
 
-    from blockchainetl_common.streaming.streamer import Streamer
+    from iconetl.streaming.instrumented_streamer import Streamer
 
     from iconetl.streaming.icx_streamer_adapter import IcxStreamerAdapter
     from iconetl.streaming.item_exporter_creator import create_item_exporter
@@ -237,6 +257,10 @@ def stream(
         period_seconds=period_seconds,
         block_batch_size=block_batch_size,
         pid_file=pid_file,
+        metrics_labels={
+            "network": metrics_network_name,
+            "container": metrics_container_name,
+        },
     )
     streamer.stream()
 
