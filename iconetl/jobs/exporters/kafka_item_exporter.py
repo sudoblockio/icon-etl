@@ -89,7 +89,7 @@ class KafkaItemExporter:
                         headers.append(
                             ("hash", bytes(item["transaction_hash"], "utf-8"))
                         )
-                        headers.append("address", bytes(item["address"], "utf-8"))
+                        headers.append(("address", bytes(item["address"], "utf-8")))
                         # Create logs_raw object
                         value_object = logs_raw.LogRaw(
                             type=str(item["type"]),
