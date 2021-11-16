@@ -22,6 +22,7 @@
 import itertools
 
 from iconetl.misc.retriable_value_error import RetriableValueError
+from iconetl.misc.unfinalized_block_value_error import UnfinalizedBlockValueError
 
 
 def hex_to_dec(hex_string):
@@ -80,12 +81,29 @@ def rpc_response_to_result(response):
         if response.get("error") is None:
             error_message = error_message + " Make sure node is synced."
             raise RetriableValueError(error_message)
+        elif response.get("error") is not None and is_unfinalized_block_error(
+            response.get("error").get("code")
+        ):
+            raise UnfinalizedBlockValueError(error_message)
         elif response.get("error") is not None and is_retriable_error(
             response.get("error").get("code")
         ):
             raise RetriableValueError(error_message)
         raise ValueError(error_message)
     return result
+
+
+def is_unfinalized_block_error(error_code):
+    if error_code is None:
+        return False
+
+    if not isinstance(error_code, int):
+        return False
+
+    if error_code == -31003:
+        return True
+
+    return False
 
 
 def is_retriable_error(error_code):
