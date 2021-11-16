@@ -79,7 +79,7 @@ class Streamer:
         if not self.metrics_labels["container"]:
             self.metrics_labels["container"] = "unspecified"
 
-        if not self.start_block and self.last_synced_block:
+        if not self.start_block and isinstance(self.last_synced_block, int):
             START_BLOCK.labels(
                 self.metrics_labels["network"], self.metrics_labels["container"]
             ).set(self.last_synced_block)
