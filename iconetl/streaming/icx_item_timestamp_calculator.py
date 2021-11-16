@@ -54,6 +54,9 @@ def convert_unknown_resolution_to_epoch_seconds(timestamp):
     :return: Epoch timestamp of seconds resolution.
     """
 
+    if timestamp == 0:
+        return 0
+
     digits = floor(log10(timestamp)) + 1
     delta = digits - 10
 
