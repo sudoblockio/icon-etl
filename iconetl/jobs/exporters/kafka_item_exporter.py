@@ -67,6 +67,7 @@ class KafkaItemExporter:
                         # Configure header & key
                         key = bytes(str(item["number"]), "utf-8")
                         headers.append(("hash", bytes(item["hash"], "utf-8")))
+                        timestamp = int(item['timestamp'])
                         # Create blocks_raw object
                         value_object = blocks_raw.BlockRaw(
                             type=str(item["type"]),
@@ -89,6 +90,7 @@ class KafkaItemExporter:
                         headers.append(
                             ("hash", bytes(item["transaction_hash"], "utf-8"))
                         )
+                        timestamp = int(item['block_timestamp'])
                         headers.append(("address", bytes(item["address"], "utf-8")))
                         # Create logs_raw object
                         value_object = logs_raw.LogRaw(
@@ -109,6 +111,7 @@ class KafkaItemExporter:
                     else:
                         # Configure header & key
                         headers.append(("hash", bytes(item["hash"], "utf-8")))
+                        timestamp = int(item['block_timestamp'])
                         if item["to_address"]:
                             headers.append(("to", bytes(item["to_address"], "utf-8")))
                             key = bytes(item["hash"], "utf-8")
@@ -160,6 +163,7 @@ class KafkaItemExporter:
                             ),
                             key=key,
                             headers=headers,
+                            timestamp=timestamp,
                         )
                     else:
                         self.producer.produce(
@@ -167,6 +171,7 @@ class KafkaItemExporter:
                             value=MessageToJson(value_object),
                             key=key,
                             headers=headers,
+                            timestamp=timestamp,
                         )
                     self.producer.poll(0)
 
