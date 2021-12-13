@@ -26,6 +26,7 @@ import time
 
 from blockchainetl_common.file_utils import smart_open
 
+from iconetl.misc.unfinalized_block_value_error import UnfinalizedBlockValueError
 from iconetl.streaming.utils.streamer_adapter_stub import StreamerAdapterStub
 
 
@@ -82,6 +83,13 @@ class Streamer:
 
             try:
                 synced_blocks = self._sync_cycle()
+            except UnfinalizedBlockValueError:
+                logging.info(
+                    "Current block is not yet finalized. Sleeping for {} seconds...".format(
+                        self.period_seconds
+                    )
+                )
+                time.sleep(self.period_seconds)
             except Exception as e:
                 logging.exception("An exception occurred while syncing block data.")
                 if not self.retry_errors:
