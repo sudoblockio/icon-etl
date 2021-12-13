@@ -54,58 +54,90 @@ jobs:
             geometrylabs/iconetl:${{ steps.source.outputs.TAG }}
 
   update_deployments:
-    name: Update dev deployments
+    name: Update deployments
     runs-on: ubuntu-latest
     needs: docker
     steps:
-      - name: Merge main -> deployment-dev-head
-        uses: devmasx/merge-branch@v1.3.1
-        with:
-          type: now
-          from_branch: main
-          target_branch: deployment-dev-head
-          github_token: ${{ github.token }}
-
-      - name: Merge main -> deployment-dev-backfill
-        uses: devmasx/merge-branch@v1.3.1
-        with:
-          type: now
-          from_branch: main
-          target_branch: deployment-dev-backfill
-          github_token: ${{ github.token }}
-
-      - name: Checkout dev head deployment
+      - name: Checkout charts repo
         uses: actions/checkout@v2
         with:
-          ref: deployment-dev-head
-          path: deployment-dev-head
+          repository: geometry-labs/icon-charts
+          ref: main
+          path: charts
+          token: ${{ secrets.ICON_CHARTS_PAT }}
 
-      - name: Checkout dev backfill deployment
-        uses: actions/checkout@v2
-        with:
-          ref: deployment-dev-backfill
-          path: deployment-dev-backfill
-
-      - name: Update dev head deployment values file and re-commit
+      - name: Update dev values file
         uses: fjogeleit/yaml-update-action@master
         with:
-          valueFile: 'chart/deployments/dev-mainnet-head/values.dev.yaml'
+          workDir: charts
+          repository: geometry-labs/icon-charts
+          valueFile: 'deployments/dev/mainnet/etl/values.yaml'
           propertyPath: 'image.tag'
           value: ${{ steps.source.outputs.TAG }}
-          branch: deployment-dev-head
+          branch: main
           createPR: 'false'
-          token: ${{ secrets.GITHUB_TOKEN }}
           updateFile: true
-          workDir: deployment-dev-head
+          commitChange: false
 
-      - name: Update dev backfill deployment values file and re-commit
+      - name: Update prod mainnet us-west values file
         uses: fjogeleit/yaml-update-action@master
         with:
-          valueFile: 'chart/deployments/dev-mainnet-backfill/values.dev.yaml'
+          workDir: charts
+          repository: geometry-labs/icon-charts
+          valueFile: 'deployments/prod-us-west-2/mainnet/etl/values.yaml'
           propertyPath: 'image.tag'
           value: ${{ steps.source.outputs.TAG }}
-          branch: deployment-dev-backfill
+          branch: main
           createPR: 'false'
-          token: ${{ secrets.GITHUB_TOKEN }}
           updateFile: true
-          workDir: deployment-dev-backfill
+          commitChange: false
+
+      - name: Update prod sejong us-west values file
+        uses: fjogeleit/yaml-update-action@master
+        with:
+          workDir: charts
+          repository: geometry-labs/icon-charts
+          valueFile: 'deployments/prod-us-west-2/mainnet/etl/values.yaml'
+          propertyPath: 'image.tag'
+          value: ${{ steps.source.outputs.TAG }}
+          branch: main
+          createPR: 'false'
+          updateFile: true
+          commitChange: false
+
+      - name: Update prod mainnet eu-west values file
+        uses: fjogeleit/yaml-update-action@master
+        with:
+          workDir: charts
+          repository: geometry-labs/icon-charts
+          valueFile: 'deployments/prod-eu-west-1/mainnet/etl/values.yaml'
+          propertyPath: 'image.tag'
+          value: ${{ steps.source.outputs.TAG }}
+          branch: main
+          createPR: 'false'
+          updateFile: true
+          commitChange: false
+
+      - name: Configure credentials
+        uses: oleksiyrudenko/gha-git-credentials@v2-latest
+        with:
+          token: '${{ secrets.ICON_CHARTS_PAT }}'
+          global: true
+          name: 'Geometry Bot'
+          email: '78675928+geometrybot@users.noreply.github.com'
+
+      - name: Commit all updates
+        run: |
+          git add -A
+          git commit -m "ETL deployment image versions to ${{ steps.source.outputs.TAG }}"
+          git push origin
+        working-directory: charts
+
+      - name: Push tags
+        run: |
+          git stash
+          git pull
+          git tag -f etl-prod-uswest2 ${{ steps.yaml-update.outputs.commit }}
+          git tag -f etl-prod-euwest1 ${{ steps.yaml-update.outputs.commit }}
+          git push -f origin --tags
+        working-directory: charts
