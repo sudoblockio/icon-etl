@@ -1,0 +1,2 @@
+class UnfinalizedBlockValueError(ValueError):
+    pass
